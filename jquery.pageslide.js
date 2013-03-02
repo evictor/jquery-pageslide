@@ -27,11 +27,13 @@
     /*
      * Private methods 
      */
-    function _load( url, useIframe ) {
+    function _load( url, useIframe, clone ) {
         // Are we loading an element from the page or a URL?
         if ( url.indexOf("#") === 0 ) {                
             // Load a page element                
-            $(url).clone(true).appendTo( $pageslide.empty() ).show();
+            var elem = $(url);
+            clone && (elem = elem.clone(true));
+            elem.appendTo( $pageslide.empty() ).show();
         } else {
             // Load a URL. Into an iframe?
             if( useIframe ) {
@@ -122,7 +124,9 @@
         direction:  'right',    // Accepts 'left' or 'right'
         modal:      false,      // If set to true, you must explicitly close pageslide using $.pageslide.close();
         iframe:     true,       // By default, linked pages are loaded into an iframe. Set this to false if you don't want an iframe.
-        href:       null        // Override the source of the content. Optional in most cases, but required when opening pageslide programmatically.
+        href:       null,       // Override the source of the content. Optional in most cases, but required when opening pageslide programmatically.
+        clone:      true        // True for backwards compat; set to false to stop cloning target elems in non-iframe
+                                // mode, which may cause problems with Twitter Bootstrap components in target
     };
 	
 	/*
@@ -137,11 +141,11 @@
 	    // Are we trying to open in different direction?
         if( $pageslide.is(':visible') && $pageslide.data( 'direction' ) != settings.direction) {
             $.pageslide.close(function(){
-                _load( settings.href, settings.iframe );
+                _load( settings.href, settings.iframe, settings.clone );
                 _start( settings.direction, settings.speed );
             });
         } else {                
-            _load( settings.href, settings.iframe );
+            _load( settings.href, settings.iframe, settings.clone );
             if( $pageslide.is(':hidden') ) {
                 _start( settings.direction, settings.speed );
             }
