@@ -32,8 +32,14 @@
         if ( url.indexOf("#") === 0 ) {                
             // Load a page element                
             var elem = $(url);
-            clone && (elem = elem.clone(true));
-            elem.appendTo( $pageslide.empty() ).show();
+            clone && ( elem = elem.clone( true ) );
+            if ( !elem.data( 'appended.pageslide' ) )
+            {
+              $pageslide.children().data( 'appended.pageslide', false );
+              $pageslide.is( ':not(:empty)' ) && $pageslide.empty();
+              elem.appendTo( $pageslide ).data( 'appended.pageslide', true );
+            }
+            elem.show();
         } else {
             // Load a URL. Into an iframe?
             if( useIframe ) {
